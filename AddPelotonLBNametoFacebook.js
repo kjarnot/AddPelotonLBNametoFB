@@ -22,6 +22,9 @@ var release_date = 20160316;
 var jsonNameMapURL = "http://playground.jarnot.com/peloton/peloton_name_map.json";
 var jsonNameMap = {};
 
+// Global variable to track # of FB names found in DOM
+var numFBNames = 0;
+
 function checkMutationForNewComments(mutation) {
     if ((mutation === null) || (mutation.addedNodes === null)) {
         return false;
@@ -50,6 +53,8 @@ if (typeof MutationObserver !== 'undefined') {
 }
 
 function addLBNames(root) {
+    var updatedNumFBNames = 0;
+
     GM_log("In addLBNames()");
 
     // Only run on Peloton-related pages
@@ -59,6 +64,12 @@ function addLBNames(root) {
 
     var fbNames = document.evaluate('//a[@class=" UFICommentActorName"]', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
     GM_log("Found " + fbNames.snapshotLength + " comments");
+
+    updatedNumFBNames = fbNames.snapshotLength;
+    if (updatedNumFBNames == numFBNames) {
+        GM_log("# of FB names has not changed.  Exiting addLBNames()...");
+        return false;
+    }
 
     for (var i = fbNames.snapshotLength - 1; i >= 0; i--) {
         var fbName = fbNames.snapshotItem(i);
