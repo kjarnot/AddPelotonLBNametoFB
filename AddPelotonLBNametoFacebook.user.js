@@ -1,15 +1,15 @@
 // ==UserScript==
 // @name        AddPelotonLBNametoFB
 // @downloadURL https://github.com/kjarnot/AddPelotonLBNametoFB/raw/master/AddPelotonLBNametoFacebook.user.js
-// @namespace   http://www.jarnot.com
+// @namespace   https://github.com/kjarnot/AddPelotonLBNametoFB
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js
-// @require     http://courses.ischool.berkeley.edu/i290-4/f09/resources/console.jq_xhr.js
-// @require     https://github.com/kjarnot/AddPelotonLBNametoFB/raw/master/peloton_name_map.json
+// @require     http://courses.ischool.berkeley.edu/i290-4/f09/resources/gm_jq_xhr.js
 // @description Display LB name next to Facebook full user name
 // @include     http://facebook.com/*
 // @include     http://*.facebook.com/*
 // @include     https://facebook.com/*
 // @include     https://*.facebook.com/*
+// @include     https://github.com/*
 // @exclude     http://*.facebook.com/plugins/*
 // @exclude     https://*.facebook.com/plugins/*
 // @author      Kevin Jarnot
@@ -21,7 +21,8 @@ var version = '1.0.0';
 var version_timestamp = 1458051466388; // javascript:window.alert(new Date().getTime());
 var release_date = 20160316;
 
-var jsonNameMapURL = "https://github.com/kjarnot/AddPelotonLBNametoFB/raw/master/peloton_name_map.json";
+//var jsonNameMapURL = "https://github.com/kjarnot/AddPelotonLBNametoFB/raw/master/peloton_name_map.json";
+var jsonNameMapURL = "http://playground.jarnot.com/misc/peloton/peloton_name_map.json";
 var jsonNameMap = {};
 
 // Global variable to track # of FB names found in DOM
@@ -64,16 +65,20 @@ function addLBNames(root) {
         return false;
     }
 
-    var fbNames = document.evaluate('//a[@class=" UFICommentActorName"]', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+    var fbNames = document.evaluate('//a[@class=" UFICommentActorName"]', document, null,
+        XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
     console.log("Found " + fbNames.snapshotLength + " comments");
 
     updatedNumFBNames = fbNames.snapshotLength;
+    console.log("up = " + updatedNumFBNames + ", num = " + numFBNames);
     if (updatedNumFBNames == numFBNames) {
         console.log("# of FB names has not changed.  Exiting addLBNames()...");
         return false;
     }
 
-    for (var i = fbNames.snapshotLength - 1; i >= 0; i--) {
+    numFBNames = updatedNumFBNames;
+
+    for (var i = numFBNames - 1; i >= 0; i--) {
         var fbName = fbNames.snapshotItem(i);
         var nameText = fbName.innerText;
         console.log("Found FB name: " + nameText);
